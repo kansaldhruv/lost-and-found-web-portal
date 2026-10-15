@@ -1,0 +1,24 @@
+{
+  "teachers": [
+    {
+      "id": "TCH-001",
+      "email": "admin@college.edu",
+      "name": "Campus Faculty Custodian",
+      "dept": "College Lost & Found Desk",
+      "custodyRoom": "Administrative Gatehouse Room 102",
+      "passwordHash": "$2b$10$udwxxjfbdu6y/THFzWVuneUh6AxMNrLd2V2./mEPtBoBFJDUAvV6W",
+      "role": "teacher"
+    }
+  ],
+  "students": [
+    {
+      "id": "STU-001",
+      "email": "student@test.edu",
+      "name": "Campus Student",
+      "dept": "Student Contributor",
+      "custodyRoom": "",
+      "passwordHash": "$2b$10$0N8Ia4fI32SGOKQdORcl8.R9dsmca7tgxSr1SxzsdZ.jBZVhW51eW",
+      "role": "student"
+    }
+  ]
+}

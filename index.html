@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOST&amp;FOUND | Campus Property Recovery &amp; Student Facility</title>
+  <meta name="description" content="Official College Campus Lost and Found Portal. Search lost belongings, track claims, and verify returned items with campus faculty and security.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for crisp modern icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+</head>
+<body class="theme-light">
+  <!-- Main Navigation Header -->
+  <header class="main-header" id="mainHeader">
+    <div class="header-container">
+      <!-- Logo Branding -->
+      <a href="#" class="brand-logo" id="brandLogo">
+        <div class="brand-icon-box">
+          <img src="abesit-logo.png" alt="ABESIT College of Engineering">
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">LOST<span class="brand-amp">&amp;</span>FOUND</span>
+          <span class="brand-sub">CAMPUS PORTAL</span>
+        </div>
+      </a>
+
+      <!-- Facilities & Main Navigation Menu Bar -->
+      <nav class="nav-menu" id="navMenu">
+        <button class="nav-item active" data-view="browse" id="navBrowseBtn">
+          <i class="fa-solid fa-boxes-stacked"></i>
+          <span>Lost Items</span>
+        </button>
+        <button class="nav-item" data-view="history" id="navHistoryBtn">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>Return History</span>
+          <span class="nav-badge" id="historyCounterBadge">0</span>
+        </button>
+        <button class="nav-item" data-view="facilities" id="navFacilitiesBtn">
+          <i class="fa-solid fa-building-columns"></i>
+          <span>Student Facilities</span>
+        </button>
+        <button class="nav-item" data-view="zones" id="navZonesBtn">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span>Campus Drop Zones</span>
+        </button>
+        <button class="nav-item" data-view="claims" id="navTrackClaimBtn">
+          <i class="fa-solid fa-file-shield"></i>
+          <span>Track Claims</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Actions (Auth, Post Item, Theme) -->
+      <div class="header-actions">
+        <!-- Theme Toggle -->
+        <button class="btn-icon theme-toggle" id="themeToggleBtn" title="Switch Light/Dark Mode" aria-label="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <!-- Post Found Item Button (Teacher/Admin only) -->
+        <button class="btn btn-primary" id="headerPostBtn">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span>Post Found Item</span>
+        </button>
+
+        <!-- User Role Indicator & Login / Profile Button -->
+        <div class="auth-box" id="authBox">
+          <!-- Populated by JS based on login state -->
+        </div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="mobile-drawer" id="mobileDrawer">
+      <div class="mobile-drawer-header">
+        <span class="mobile-drawer-title">Menu &amp; Facilities</span>
+        <button class="btn-icon" id="closeMobileDrawerBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="mobile-drawer-links">
+        <button class="mobile-nav-link active" data-view="browse"><i class="fa-solid fa-boxes-stacked"></i> Browse Items</button>
+        <button class="mobile-nav-link" data-view="history"><i class="fa-solid fa-clock-rotate-left"></i> Return History</button>
+        <button class="mobile-nav-link" data-view="facilities"><i class="fa-solid fa-building-columns"></i> Student Facilities</button>
+        <button class="mobile-nav-link" data-view="zones"><i class="fa-solid fa-map-location-dot"></i> Campus Drop Zones</button>
+        <button class="mobile-nav-link" data-view="claims"><i class="fa-solid fa-file-shield"></i> Track My Claim</button>
+      </div>
+      <div class="mobile-drawer-footer">
+        <button class="btn btn-primary full-width" id="mobileDrawerPostBtn"><i class="fa-solid fa-plus-circle"></i> Post Item (Teacher)</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Active Banner (Visible when Teacher is Logged in) -->
+  <aside class="admin-top-banner hidden" id="adminTopBanner" aria-label="Teacher Session Banner">
+    <div class="admin-banner-inner">
+      <div class="admin-status-info">
+        <span class="badge badge-teacher"><i class="fa-solid fa-shield-halved"></i> Faculty / Admin Mode</span>
+        <span class="admin-greeting" id="adminGreetingText">Logged in as: Prof. Sharma (Science Dept Custodian)</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <h1 class="hero-title">
+        Lost something on campus? <span class="gradient-text">Let's find it.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Search hundreds of cataloged items recovered across lecture halls, labs, library, canteen, and sports grounds. Verified by college faculty to guarantee safe return to the rightful owner.
+      </p>
+
+      <!-- Hero Search Bar -->
+      <div class="hero-search-wrapper">
+        <div class="hero-search-bar" id="heroSearchBar">
+          <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="mainSearchInput" placeholder="Search by item name, brand, color, room (e.g. Casio Calculator, Blue Bottle, Lab 3)..." autocomplete="off">
+            <button class="clear-search-btn hidden" id="clearSearchBtn" title="Clear input"><i class="fa-solid fa-circle-xmark"></i></button>
+          </div>
+          
+          <div class="search-divider"></div>
+
+          <!-- Zone Quick Selector -->
+          <div class="search-select-group">
+            <i class="fa-solid fa-location-dot select-icon"></i>
+            <select id="heroLocationFilter" aria-label="Select Campus Zone">
+              <option value="">All Campus Locations</option>
+              <option value="Central Library">Central Library</option>
+              <option value="Science & Tech Block">Science &amp; Tech Block</option>
+              <option value="Engineering Block">Engineering Block</option>
+              <option value="Main Cafeteria">Main Cafeteria</option>
+              <option value="Sports Pavilion & Ground">Sports Pavilion &amp; Ground</option>
+              <option value="Auditorium & Seminar Halls">Auditorium &amp; Halls</option>
+              <option value="Computer Labs (1-5)">Computer Labs</option>
+              <option value="Hostel & Common Room">Hostels &amp; Common Rooms</option>
+            </select>
+          </div>
+
+          <button class="btn btn-search" id="heroSearchSubmitBtn">
+            <span>Find Items</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- Quick Tag Filters -->
+        <div class="quick-tags">
+          <span class="quick-tags-label">Popular Searches:</span>
+          <button class="tag-pill" data-query="Calculator"><i class="fa-solid fa-calculator"></i> Calculators</button>
+          <button class="tag-pill" data-query="ID Card"><i class="fa-solid fa-id-card"></i> Student IDs</button>
+          <button class="tag-pill" data-query="Earphones"><i class="fa-solid fa-headphones"></i> Earbuds/AirPods</button>
+          <button class="tag-pill" data-query="Keys"><i class="fa-solid fa-key"></i> Keys</button>
+          <button class="tag-pill" data-query="Water Bottle"><i class="fa-solid fa-bottle-water"></i> Bottles</button>
+          <button class="tag-pill" data-query="Notebook"><i class="fa-solid fa-book"></i> Notes &amp; Books</button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Strip -->
+      <div class="hero-stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon-wrap stat-primary">
+            <i class="fa-solid fa-box-archive"></i>
+          </div>
+          <div class="stat-details">
+            <h2 class="stat-number" id="statActiveItems">0</h2>
+            <p class="stat-label">Active Found Items</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap stat-success">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+          </div>
+          <div class="stat-details">
+            <h2 class="stat-number" id="statReturnedItems">0</h2>
+            <p class="stat-label">Successfully Returned</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap stat-amber">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+          <div class="stat-details">
+            <h2 class="stat-number" id="statCampusZones">0</h2>
+            <p class="stat-label">Campus Drop Zones</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN APP CONTAINER (SWITCHABLE VIEWS) -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: BROWSE & SEARCH FOUND ITEMS -->
+    <!-- ========================================== -->
+    <section class="view-panel active" id="viewBrowse">
+      <div class="section-container">
+        
+        <!-- Controls Toolbar: Categories, Filters, Sorting -->
+        <div class="browse-toolbar">
+          <!-- Categories Scrollable Tabs -->
+          <div class="categories-scroll" id="categoryTabs">
+            <button class="cat-pill active" data-category="all">
+              <i class="fa-solid fa-border-all"></i> All Belongings
+            </button>
+            <button class="cat-pill" data-category="Electronics">
+              <i class="fa-solid fa-laptop"></i> Electronics
+            </button>
+            <button class="cat-pill" data-category="ID & Wallets">
+              <i class="fa-solid fa-wallet"></i> ID &amp; Wallets
+            </button>
+            <button class="cat-pill" data-category="Books & Stationery">
+              <i class="fa-solid fa-book-open"></i> Books &amp; Stationery
+            </button>
+            <button class="cat-pill" data-category="Keys">
+              <i class="fa-solid fa-key"></i> Keys &amp; Locks
+            </button>
+            <button class="cat-pill" data-category="Bags & Pouches">
+              <i class="fa-solid fa-bag-shopping"></i> Bags &amp; Pouches
+            </button>
+            <button class="cat-pill" data-category="Apparel & Accessories">
+              <i class="fa-solid fa-glasses"></i> Wearables &amp; Glasses
+            </button>
+            <button class="cat-pill" data-category="Sports & Bottles">
+              <i class="fa-solid fa-dumbbell"></i> Sports &amp; Bottles
+            </button>
+            <button class="cat-pill" data-category="Other">
+              <i class="fa-solid fa-layer-group"></i> Other Items
+            </button>
+          </div>
+
+          <!-- Secondary Filters Row -->
+          <div class="filter-controls-row">
+            <div class="filter-meta">
+              <span class="results-count-text">Showing <strong id="filterResultCount">0</strong> items</span>
+              <div class="active-filter-chips" id="activeFilterChips"></div>
+            </div>
+
+            <div class="filter-dropdowns">
+              <!-- Status Filter -->
+              <div class="custom-select-wrap">
+                <select id="statusFilter" aria-label="Filter by Status">
+                  <option value="all">Status: All Available</option>
+                  <option value="Available" selected>Available to Claim</option>
+                  <option value="Under Verification">Under Review</option>
+                  <option value="Ready for Pickup">Ready for Pickup</option>
+                </select>
+              </div>
+
+              <!-- Date Filter -->
+              <div class="custom-select-wrap">
+                <select id="dateFilter" aria-label="Filter by Date">
+                  <option value="all">Date: Any Time</option>
+                  <option value="today">Found Today</option>
+                  <option value="week">Past 7 Days</option>
+                  <option value="month">This Month</option>
+                </select>
+              </div>
+
+              <!-- Sort Filter -->
+              <div class="custom-select-wrap">
+                <select id="sortFilter" aria-label="Sort by">
+                  <option value="newest">Sort: Newly Found</option>
+                  <option value="oldest">Sort: Oldest First</option>
+                  <option value="az">Name: A to Z</option>
+                </select>
+              </div>
+
+              <button class="btn btn-outline btn-reset-filter" id="resetFiltersBtn" title="Reset all filters">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Grid Container -->
+        <div class="items-grid" id="itemsGrid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state hidden" id="emptyState">
+          <div class="empty-icon">
+            <i class="fa-solid fa-magnifying-glass-location"></i>
+          </div>
+          <h3>No Matching Lost Belongings Found</h3>
+          <p>We couldn't find any items matching your active search or filters. Try adjusting keywords or check our Student Facilities desk for newly turned-in items.</p>
+          <div class="empty-actions">
+            <button class="btn btn-primary" id="emptyResetBtn"><i class="fa-solid fa-rotate"></i> Show All Items</button>
+            <button class="btn btn-outline" id="emptyHelpdeskBtn"><i class="fa-solid fa-headset"></i> Contact Campus Security</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: RETURN HISTORY (REUNION ARCHIVE) -->
+    <!-- ========================================== -->
+    <section class="view-panel" id="viewHistory">
+      <div class="section-container">
+        <!-- History Hero Banner -->
+        <div class="history-hero-card">
+          <div class="history-hero-text">
+            <span class="badge badge-emerald"><i class="fa-solid fa-shield-heart"></i> Transparency &amp; Accountability</span>
+            <h2>Campus Return History &amp; Reunions</h2>
+            <p>Every recovered item handed back to its rightful owner is logged here. Verified by faculty members to ensure complete trust, security, and student peace of mind.</p>
+          </div>
+          <div class="history-metrics-box">
+            <div class="history-mini-stat">
+              <span class="stat-value" id="historyTotalReturned">0</span>
+              <span class="stat-desc">Belongings Restored</span>
+            </div>
+            <div class="history-mini-stat">
+              <span class="stat-value"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+              <span class="stat-desc">Faculty-verified records</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Search & Filter Bar -->
+        <div class="history-search-row">
+          <div class="search-input-group history-search-input">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="historySearchInput" placeholder="Search return history by item name, department, or faculty custodian...">
+          </div>
+          <div class="history-filter-selects">
+            <select id="historyCategoryFilter" aria-label="Filter history by category">
+              <option value="all">All Categories</option>
+              <option value="Electronics">Electronics</option>
+              <option value="ID & Wallets">ID &amp; Wallets</option>
+              <option value="Books & Stationery">Books &amp; Stationery</option>
+              <option value="Keys">Keys</option>
+              <option value="Bags & Pouches">Bags &amp; Pouches</option>
+              <option value="Apparel & Accessories">Wearables &amp; Accessories</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- History Timeline / Grid -->
+        <div class="history-grid" id="historyGrid">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="empty-state hidden" id="historyEmptyState">
+          <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+          <h3>No Returned Items in this Filter</h3>
+          <p>No historical records match the selected query. Try clearing your search.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: STUDENT FACILITIES & HELPDESK -->
+    <!-- ========================================== -->
+    <section class="view-panel" id="viewFacilities">
+      <div class="section-container">
+        <div class="facilities-header text-center">
+          <span class="badge badge-primary"><i class="fa-solid fa-graduation-cap"></i> Student Support Services</span>
+          <h2>Campus Facilities &amp; Lost Property Desks</h2>
+          <p>Learn how our campus property custody system works, where safe lockers are located, and how to verify ownership if you've lost an essential item.</p>
+        </div>
+
+        <!-- Facility Cards Grid -->
+        <div class="facilities-grid">
+          <!-- Card 1: Central Custody Desk -->
+          <div class="facility-card">
+            <div class="facility-icon"><i class="fa-solid fa-building-shield"></i></div>
+            <h3>Main Campus Security Custody</h3>
+            <p>High-value belongings such as laptops, mobile phones, jewelry, and wallets are held under biometric locked storage in the Main Admin Gatehouse.</p>
+            <ul class="facility-specs">
+              <li><i class="fa-solid fa-location-dot"></i> Ground Floor, Administrative Block Room 102</li>
+              <li><i class="fa-regular fa-clock"></i> 24/7 Custody Drop &amp; Pickup Desk</li>
+              <li><i class="fa-solid fa-phone"></i> Ext. 4022 / +1 (800) 555-CAMPUS</li>
+            </ul>
+            <div class="facility-tag">High Security Zone</div>
+          </div>
+
+          <!-- Card 2: Central Library Drop Point -->
+          <div class="facility-card">
+            <div class="facility-icon"><i class="fa-solid fa-book-bookmark"></i></div>
+            <h3>Central Library Help Counter</h3>
+            <p>Calculators, notebooks, water bottles, and stationery found in the 3 reading halls are logged daily at the 1st floor circulation counter.</p>
+            <ul class="facility-specs">
+              <li><i class="fa-solid fa-location-dot"></i> Central Library, 1st Floor Reception</li>
+              <li><i class="fa-regular fa-clock"></i> Mon-Sat: 8:00 AM - 10:00 PM</li>
+              <li><i class="fa-solid fa-envelope"></i> library.lostdesk@college.edu</li>
+            </ul>
+            <div class="facility-tag">Stationery &amp; Tech</div>
+          </div>
+
+          <!-- Card 3: Sports Complex Locker Vault -->
+          <div class="facility-card">
+            <div class="facility-icon"><i class="fa-solid fa-volleyball"></i></div>
+            <h3>Sports Pavilion &amp; Gym Lockers</h3>
+            <p>Sports kits, fitness bands, smartwatches, and jackets misplaced on football turf, basketball courts, and gymnasium are collected by the Physical Education Dept.</p>
+            <ul class="facility-specs">
+              <li><i class="fa-solid fa-location-dot"></i> Sports Arena Office, Room S-04</li>
+              <li><i class="fa-regular fa-clock"></i> 06:00 AM - 08:00 PM Daily</li>
+              <li><i class="fa-solid fa-phone"></i> Ext. 8831</li>
+            </ul>
+            <div class="facility-tag">Sports &amp; Fitness</div>
+          </div>
+
+          <!-- Card 4: ID Card Reissue Facility -->
+          <div class="facility-card">
+            <div class="facility-icon"><i class="fa-solid fa-id-badge"></i></div>
+            <h3>Student ID Replacement Desk</h3>
+            <p>Lost your RFID College ID? If it is not logged in our portal within 48 hours, request an official duplicate card directly through the Student Welfare Office.</p>
+            <ul class="facility-specs">
+              <li><i class="fa-solid fa-location-dot"></i> Dean of Student Welfare (DSW) Office</li>
+              <li><i class="fa-regular fa-clock"></i> Mon-Fri: 10:00 AM - 4:00 PM</li>
+              <li><i class="fa-solid fa-file-invoice"></i> Standard Duplicate Fee: $5</li>
+            </ul>
+            <div class="facility-tag">Administrative Service</div>
+          </div>
+        </div>
+
+        <!-- Verification Protocol Guidelines -->
+        <div class="protocol-section">
+          <h3><i class="fa-solid fa-shield-halved"></i> 4-Step Student Claim &amp; Verification Protocol</h3>
+          <p class="protocol-sub">To prevent false claims and protect students' privacy, our college follows strict verification guidelines:</p>
+          <div class="protocol-steps-grid">
+            <div class="step-card">
+              <div class="step-num">1</div>
+              <h4>Locate Item</h4>
+              <p>Browse the portal or use the search bar to locate your missing belonging.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-num">2</div>
+              <h4>File Ownership Claim</h4>
+              <p>Click "Claim Item" and describe unique identifying marks, lockscreen passwords, or serial stamps.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-num">3</div>
+              <h4>Faculty Review</h4>
+              <p>The posting teacher checks your proof against confidential custody records.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-num">4</div>
+              <h4>Pickup &amp; Handover</h4>
+              <p>Receive approval, show your College ID Card at the teacher's cabin, and collect your item!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQs Accordion -->
+        <div class="faq-container">
+          <h3>Frequently Asked Questions</h3>
+          <div class="faq-accordion" id="faqAccordion">
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Who is allowed to post found items on this portal?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Only verified faculty members, department heads, and campus security officers have authenticated login access to post found items. Students who find an item should hand it over to the nearest faculty member or security desk, who will catalog it on the portal.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>How do I prove a phone or laptop belongs to me?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="faq-answer">
+                <p>For electronic devices, you will be asked to unlock the device with your passcode/fingerprint in front of the faculty custodian, or describe unique wallpapers, cases, or serial numbers specified in the confidential verification record.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>How long are items retained in campus storage?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Belongings are held securely for a period of 90 days. Unclaimed non-sensitive items after this period are donated to community charity drives, while IDs and official documents are archived or safely shredded.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Can a friend collect my item on my behalf?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Yes, but they must present an authorization email from your registered student email address along with copies of both your College ID card and their College ID card.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: CAMPUS DROP ZONES & MAP LOCATIONS -->
+    <!-- ========================================== -->
+    <section class="view-panel" id="viewZones">
+      <div class="section-container">
+        <div class="zones-header text-center">
+          <span class="badge badge-indigo"><i class="fa-solid fa-map-pin"></i> Campus Geography</span>
+          <h2>Campus Recovery Zones &amp; Custody Desks</h2>
+          <p>Find which faculty member or security office is currently in charge of items recovered from each sector of the campus.</p>
+        </div>
+
+        <div class="zones-grid" id="campusZonesGrid">
+          <!-- Populated dynamically with interactive filter capabilities -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: STUDENT CLAIM STATUS TRACKER -->
+    <!-- ========================================== -->
+    <section class="view-panel" id="viewClaims">
+      <div class="section-container">
+        <div class="claims-tracker-card">
+          <div class="claims-tracker-header">
+            <div class="tracker-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div>
+              <h2>Track Your Item Claim Status</h2>
+              <p>Enter your <strong>Claim Reference ID</strong> (received when submitting a claim) or your <strong>Student Roll/PRN Number</strong> to view updates from the faculty custodian.</p>
+            </div>
+          </div>
+
+          <div class="tracker-search-box">
+            <div class="search-input-group">
+              <i class="fa-solid fa-ticket search-icon"></i>
+              <input type="text" id="trackClaimInput" placeholder="Enter Claim ID (e.g. CLM-8241) or Roll/PRN Number...">
+            </div>
+            <button class="btn btn-primary" id="trackClaimSubmitBtn"><i class="fa-solid fa-search"></i> Check Claim Status</button>
+          </div>
+        </div>
+
+        <!-- Claim Results List -->
+        <div class="claims-list-container" id="claimsResultsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL 1: TEACHER / ADMIN LOGIN MODAL -->
+  <!-- ========================================== -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal-box modal-md">
+      <button class="modal-close-btn" id="closeLoginModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="modal-header">
+        <div class="modal-icon-badge"><i class="fa-solid fa-user-lock"></i></div>
+        <h3>Campus Sign In</h3>
+        <p>Sign in as faculty or student to post found belongings. Faculty accounts can also review claims and manage returns.</p>
+      </div>
+
+      <form id="teacherLoginForm" class="modal-form">
+        <div class="form-group">
+          <label for="teacherEmailInput">College Email</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="teacherEmailInput" placeholder="student@test.edu" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="teacherPasswordInput">Security Password</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="teacherPasswordInput" placeholder="Enter account password" autocomplete="current-password" required>
+          </div>
+        </div>
+
+        <div class="form-error-msg hidden" id="loginErrorMsg"></div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline" id="cancelLoginBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="loginSubmitBtn">
+            <i class="fa-solid fa-right-to-bracket"></i> Authenticate &amp; Sign In
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 2: POST FOUND ITEM (SIGNED-IN USERS) -->
+  <!-- ========================================== -->
+  <div class="modal-overlay hidden" id="postItemModal">
+    <div class="modal-box modal-lg">
+      <button class="modal-close-btn" id="closePostItemModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="modal-header">
+        <div class="modal-icon-badge"><i class="fa-solid fa-plus-circle"></i></div>
+        <h3>Post New Found Belonging</h3>
+        <p>Record a found item for the campus portal. Provide public descriptions along with secret verification details.</p>
+      </div>
+
+      <form id="postItemForm" class="modal-form">
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="itemTitleInput">Item Title / Name *</label>
+            <input type="text" id="itemTitleInput" placeholder="e.g. Casio fx-991EX Scientific Calculator, Apple AirPods Pro" required>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="itemCategorySelect">Category *</label>
+            <select id="itemCategorySelect" required>
+              <option value="">Select Category</option>
+              <option value="Electronics">Electronics</option>
+              <option value="ID & Wallets">ID &amp; Wallets</option>
+              <option value="Books & Stationery">Books &amp; Stationery</option>
+              <option value="Keys">Keys</option>
+              <option value="Bags & Pouches">Bags &amp; Pouches</option>
+              <option value="Apparel & Accessories">Apparel &amp; Accessories</option>
+              <option value="Sports & Bottles">Sports &amp; Bottles</option>
+              <option value="Other">Other Items</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="itemZoneSelect">Found Location (Zone) *</label>
+            <select id="itemZoneSelect" required>
+              <option value="">Select Campus Location</option>
+              <option value="Central Library">Central Library</option>
+              <option value="Science & Tech Block">Science &amp; Tech Block</option>
+              <option value="Engineering Block">Engineering Block</option>
+              <option value="Main Cafeteria">Main Cafeteria</option>
+              <option value="Sports Pavilion & Ground">Sports Pavilion &amp; Ground</option>
+              <option value="Auditorium & Seminar Halls">Auditorium &amp; Seminar Halls</option>
+              <option value="Computer Labs (1-5)">Computer Labs</option>
+              <option value="Hostel & Common Room">Hostel &amp; Common Room</option>
+              <option value="Other Campus Area">Other Campus Area</option>
+            </select>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="itemExactLocationInput">Exact Spot / Room No. *</label>
+            <input type="text" id="itemExactLocationInput" placeholder="e.g. 2nd Floor Reading Table #14, Room 302" required>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="itemFoundDateInput">Date &amp; Time Found *</label>
+            <input type="datetime-local" id="itemFoundDateInput" required>
+          </div>
+        </div>
+
+        <!-- Image Upload or Select Preset -->
+        <div class="form-group">
+          <label>Item Image (Upload File or Select Quick High-Res Photo)</label>
+          <div class="image-source-tabs">
+            <div class="upload-zone" id="imageUploadDropzone">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Drag &amp; Drop photo here, or <strong class="text-primary">browse files</strong></span>
+              <input type="file" id="itemImageFileInput" accept="image/*" class="file-input-hidden">
+            </div>
+            
+            <div class="image-preview-container hidden" id="imagePreviewContainer">
+              <img src="" id="imagePreviewImg" alt="Preview">
+              <button type="button" class="btn-remove-preview" id="removePreviewBtn"><i class="fa-solid fa-trash"></i> Remove</button>
+            </div>
+          </div>
+          
+          <div class="preset-images-strip">
+            <span class="preset-label">Or choose sample image:</span>
+            <div class="preset-images-scroll" id="presetImagesContainer">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Public Description -->
+        <div class="form-group">
+          <label for="itemPublicDescInput">Public Description (Visible to all students) *</label>
+          <textarea id="itemPublicDescInput" rows="3" placeholder="Provide general details without revealing sensitive proof points (e.g. 'Found a black zipper pencil pouch containing stationary items on desk 4')." required></textarea>
+        </div>
+
+        <!-- Confidential Verification Information (Crucial Security Feature) -->
+        <div class="form-group confidential-box">
+          <div class="confidential-badge">
+            <i class="fa-solid fa-lock"></i> CONFIDENTIAL - FOR FACULTY VERIFICATION ONLY
+          </div>
+          <label for="itemSecretDetailsInput">Secret Verification Key / Ownership Proof *</label>
+          <textarea id="itemSecretDetailsInput" rows="2" placeholder="Crucial details hidden from students. Example: 'Sticky note inside says Rahul CS-4A', 'Lock screen has photo of golden retriever', 'Has a red crack on left hinge'." required></textarea>
+          <span class="helper-text"><i class="fa-solid fa-circle-info"></i> Students will be prompted to supply this information when claiming the item to prove it belongs to them.</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="itemFacultyNameInput">Posted By</label>
+            <input type="text" id="itemFacultyNameInput" readonly>
+          </div>
+          <div class="form-group flex-1">
+            <label for="itemCustodyRoomInput">Pickup Location / Desk</label>
+            <input type="text" id="itemCustodyRoomInput" placeholder="e.g. Campus Lost &amp; Found Desk" required>
+          </div>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline" id="cancelPostItemBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitPostItemBtn">
+            <i class="fa-solid fa-check-circle"></i> Publish Item to Campus Portal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 3: STUDENT CLAIM SUBMISSION MODAL -->
+  <!-- ========================================== -->
+  <div class="modal-overlay hidden" id="claimModal">
+    <div class="modal-box modal-md">
+      <button class="modal-close-btn" id="closeClaimModalBtn"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <div class="modal-icon-badge"><i class="fa-solid fa-hand-holding-heart"></i></div>
+        <h3>Submit Ownership Claim</h3>
+        <p>Provide verified identification and specific details to claim this belonging.</p>
+      </div>
+
+      <!-- Item Preview Mini Banner -->
+      <div class="claim-item-summary" id="claimItemSummary">
+        <!-- Injected by JS -->
+      </div>
+
+      <form id="studentClaimForm" class="modal-form">
+        <input type="hidden" id="claimItemId">
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="studentNameInput">Student Full Name *</label>
+            <input type="text" id="studentNameInput" placeholder="e.g. Aryan Malhotra" required>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="studentRollInput">Student Roll / PRN *</label>
+            <input type="text" id="studentRollInput" placeholder="e.g. 2024-CS-084" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="studentEmailInput">College Email Address *</label>
+            <input type="email" id="studentEmailInput" placeholder="e.g. aryan.m@student.college.edu" required>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="studentPhoneInput">Contact Phone Number *</label>
+            <input type="tel" id="studentPhoneInput" placeholder="e.g. +1 555-019-2834" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="studentProofInput">Ownership Proof &amp; Distinctive Features *</label>
+          <textarea id="studentProofInput" rows="3" placeholder="Describe unique identifying markers, scratches, stickers, wallpaper, exact brand, or purchase invoice details that prove you own this item." required></textarea>
+          <span class="helper-text">This will be compared against the secret custody notes recorded by the faculty custodian.</span>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline" id="cancelClaimBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitClaimBtn">
+            <i class="fa-solid fa-paper-plane"></i> Send Claim to Faculty Custodian
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 4: ADMIN / TEACHER CLAIMS DESK -->
+  <!-- ========================================== -->
+  <div class="modal-overlay hidden" id="adminClaimsManagerModal">
+    <div class="modal-box modal-xl">
+      <button class="modal-close-btn" id="closeAdminClaimsModalBtn"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <div class="modal-icon-badge"><i class="fa-solid fa-inbox"></i></div>
+        <h3>Faculty Claims Verification Desk</h3>
+        <p>Review submitted student claims, compare student proof with secret custody records, and authorize handovers.</p>
+      </div>
+
+      <!-- Pending Claims Container -->
+      <div class="admin-claims-container" id="adminClaimsList">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 5: COMPLETE HANDOVER & MARK RETURNED -->
+  <!-- ========================================== -->
+  <div class="modal-overlay hidden" id="returnItemModal">
+    <div class="modal-box modal-md">
+      <button class="modal-close-btn" id="closeReturnModalBtn"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <div class="modal-icon-badge stat-success"><i class="fa-solid fa-circle-check"></i></div>
+        <h3>Handover &amp; Record Return</h3>
+        <p>Confirm the belonging has been physically returned to the student. This will be permanently archived in the campus Return History.</p>
+      </div>
+
+      <form id="recordReturnForm" class="modal-form">
+        <input type="hidden" id="returnItemId">
+        <input type="hidden" id="returnClaimId">
+
+        <div class="return-item-preview" id="returnItemPreview">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="form-group">
+          <label for="returnStudentNameInput">Student Name (Recipient) *</label>
+          <input type="text" id="returnStudentNameInput" required>
+        </div>
+
+        <div class="form-group">
+          <label for="returnStudentIdInput">Student Roll / PRN *</label>
+          <input type="text" id="returnStudentIdInput" required>
+        </div>
+
+        <div class="form-group">
+          <label for="returnNotesInput">Handoff Remarks &amp; Verification Note *</label>
+          <textarea id="returnNotesInput" rows="2" placeholder="e.g. Student unlocked phone with PIN and presented valid RFID college card." required></textarea>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline" id="cancelReturnBtn">Cancel</button>
+          <button type="submit" class="btn btn-success" id="confirmReturnSubmitBtn">
+            <i class="fa-solid fa-champagne-glasses"></i> Confirm Return &amp; Archive in History
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 6: ITEM DETAIL INSPECTION MODAL -->
+  <!-- ========================================== -->
+  <div class="modal-overlay hidden" id="itemDetailModal">
+    <div class="modal-box modal-lg" id="itemDetailModalContent">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Campus Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-top-row">
+        <div class="footer-brand">
+          <div class="brand-logo footer-logo">
+            <div class="brand-icon-box">
+              <img src="abesit-logo.png" alt="ABESIT College of Engineering">
+            </div>
+            <div class="brand-text">
+              <span class="brand-title">LOST<span class="brand-amp">&amp;</span>FOUND</span>
+              <span class="brand-sub">CAMPUS PORTAL</span>
+            </div>
+          </div>
+          <p class="footer-desc">
+            The unified campus property recovery service. Providing transparent, secure, and student-focused custody for lost belongings across collegiate grounds.
+          </p>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Campus Facilities</h4>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-nav" data-view="browse"><i class="fa-solid fa-chevron-right"></i> All Found Belongings</a></li>
+            <li><a href="#" class="footer-nav" data-view="history"><i class="fa-solid fa-chevron-right"></i> Reunited History Log</a></li>
+            <li><a href="#" class="footer-nav" data-view="facilities"><i class="fa-solid fa-chevron-right"></i> Custody Locker Rooms</a></li>
+            <li><a href="#" class="footer-nav" data-view="zones"><i class="fa-solid fa-chevron-right"></i> Campus Drop Points</a></li>
+            <li><a href="#" class="footer-nav" data-view="claims"><i class="fa-solid fa-chevron-right"></i> Track My Claim Status</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Emergency &amp; Helpdesk</h4>
+          <ul class="footer-contact-list">
+            <li><i class="fa-solid fa-shield-halved"></i> Security Gatehouse: Ext. 4022</li>
+            <li><i class="fa-solid fa-envelope"></i> lostandfound@campus.edu</li>
+            <li><i class="fa-solid fa-building"></i> Admin Block Room 102</li>
+            <li><i class="fa-regular fa-clock"></i> 24/7 Security Hotline: +1 (800) 555-SAFE</li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Portal Administration</h4>
+          <p class="footer-admin-note">
+            Are you a teacher or administrative custodian? Sign in to manage submissions and verify student claims.
+          </p>
+          <div class="footer-actions">
+            <button class="btn btn-sm btn-outline-white" id="footerLoginBtn">
+              <i class="fa-solid fa-user-lock"></i> Faculty / Admin Login
+            </button>
+            <button class="btn btn-sm btn-text-subtle" id="footerResetDemoDataBtn" title="Reset to default mock campus dataset">
+              <i class="fa-solid fa-rotate-left"></i> Reset Demo Records
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-row">
+        <p>&copy; 2026 LOST&amp;FOUND Campus Portal. All Rights Reserved. Designed for College Students &amp; Faculty Safety.</p>
+        <div class="footer-bottom-badges">
+          <span class="ssl-badge"><i class="fa-solid fa-lock"></i> Encrypted Campus Database</span>
+          <span class="ssl-badge"><i class="fa-solid fa-user-check"></i> Faculty Verified</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>

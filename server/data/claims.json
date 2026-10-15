@@ -1,0 +1,58 @@
+[
+  {
+    "claimId": "CLM-1065",
+    "itemId": "ITM-103",
+    "itemTitle": "Student RFID Smart Card & Blue Lanyard",
+    "studentName": "dhruv",
+    "studentRoll": "250",
+    "studentEmail": "kansaldhruva@gmailk.com",
+    "studentPhone": "8979241108",
+    "studentProof": "djhASJAJSDJ",
+    "status": "Returned / Completed",
+    "statusNote": null,
+    "timestamp": "2026-10-15T17:17:23.753Z"
+  },
+  {
+    "claimId": "CLM-4276",
+    "itemId": "ITM-101",
+    "itemTitle": "Casio fx-991EX ClassWiz Scientific Calculator",
+    "studentName": "dhruv",
+    "studentRoll": "250",
+    "studentEmail": "kansaldhruva@gmailk.com",
+    "studentPhone": "8979241108",
+    "studentProof": "my thing",
+    "status": "Returned / Completed",
+    "statusNote": "Proof verified by Prof. Rajesh Sharma. Please bring your College ID card to Science & Tech Block, Cabin 104 to collect the item.",
+    "timestamp": "2026-10-15T17:11:03.676Z",
+    "reviewedBy": "Prof. Rajesh Sharma",
+    "reviewedAt": "2026-10-15T17:12:26.695Z"
+  },
+  {
+    "claimId": "CLM-8241",
+    "itemId": "ITM-102",
+    "itemTitle": "Apple AirPods Pro (2nd Gen) in Matte Case",
+    "studentName": "David Abraham",
+    "studentRoll": "2023-CS-044",
+    "studentEmail": "david.a@student.college.edu",
+    "studentPhone": "+1 (555) 234-9812",
+    "studentProof": "Engraving inside the lid says 'To Dave - 2024'. I lost them while studying for Midterms in Cubicle 18.",
+    "status": "Rejected",
+    "timestamp": "2026-09-23T15:40:00.000Z",
+    "statusNote": "npthing",
+    "reviewedBy": "Prof. Rajesh Sharma",
+    "reviewedAt": "2026-10-15T17:12:08.265Z"
+  },
+  {
+    "claimId": "CLM-6190",
+    "itemId": "ITM-104",
+    "itemTitle": "Titan Leather Bi-Fold Wallet (Brown)",
+    "studentName": "Kunal Bansal",
+    "studentRoll": "2024-EC-108",
+    "studentEmail": "kunal.b@student.college.edu",
+    "studentPhone": "+1 (555) 890-1234",
+    "studentProof": "Has my metro card with a Pikachu sticker and photo of my parents inside the sleeve.",
+    "status": "Approved for Pickup",
+    "statusNote": "Please visit Science Block Cabin 104 with your RFID College ID during desk hours.",
+    "timestamp": "2026-09-23T09:15:00.000Z"
+  }
+]

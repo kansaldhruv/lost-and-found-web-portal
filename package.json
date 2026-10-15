@@ -1,0 +1,27 @@
+{
+  "name": "lostfound-campus-portal",
+  "version": "1.0.0",
+  "description": "Lost & Found Campus Portal Backend API",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "keywords": [
+    "lost",
+    "found",
+    "campus",
+    "portal"
+  ],
+  "author": "Campus IT Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
+    "uuid": "^14.0.2"
+  }
+}
