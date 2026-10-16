@@ -551,6 +551,7 @@ async function showItemDetails(itemId) {
 function openClaimModal(itemId) {
   const item = State.items.find(i => i.id === itemId);
   if (!item) return;
+  document.getElementById('studentClaimForm').reset();
   document.getElementById('claimItemId').value = item.id;
   document.getElementById('claimItemSummary').innerHTML = `
     <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" class="claim-item-thumb">
@@ -558,7 +559,6 @@ function openClaimModal(itemId) {
       <h4>${escapeHtml(item.title)}</h4>
       <p><i class="fa-solid fa-location-dot"></i> ${escapeHtml(item.locationZone)} &bull; Custodian: ${escapeHtml(item.facultyCustodian)}</p>
     </div>`;
-  document.getElementById('studentClaimForm').reset();
   openModal('claimModal');
 }
 
@@ -569,16 +569,18 @@ async function handleClaimSubmit(e) {
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
 
   try {
-    const body = {
-      itemId:       document.getElementById('claimItemId').value,
-      studentName:  document.getElementById('studentNameInput').value.trim(),
-      studentRoll:  document.getElementById('studentRollInput').value.trim(),
-      studentEmail: document.getElementById('studentEmailInput').value.trim(),
-      studentPhone: document.getElementById('studentPhoneInput').value.trim(),
-      studentProof: document.getElementById('studentProofInput').value.trim()
-    };
+    const body = new FormData();
+    body.append('itemId', document.getElementById('claimItemId').value);
+    body.append('studentName', document.getElementById('studentNameInput').value.trim());
+    body.append('studentRoll', document.getElementById('studentRollInput').value.trim());
+    body.append('studentEmail', document.getElementById('studentEmailInput').value.trim());
+    body.append('studentPhone', document.getElementById('studentPhoneInput').value.trim());
+    body.append('studentProof', document.getElementById('studentProofInput').value.trim());
 
-    const data = await api.post('/claims', body);
+    const proofImage = document.getElementById('claimProofImageInput').files[0];
+    if (proofImage) body.append('proofImage', proofImage);
+
+    const data = await api.upload('/claims', body);
     closeModal('claimModal');
     showToast(data.message, 'success');
 
@@ -748,6 +750,12 @@ async function openAdminClaimsManagerModal() {
           <div class="comparison-col">
             <h5><i class="fa-solid fa-user-pen"></i> Student's Submitted Proof:</h5>
             <p>${escapeHtml(claim.studentProof)}</p>
+            ${claim.proofImageUrl ? `
+              <a class="claim-proof-image-link" href="${escapeHtml(claim.proofImageUrl)}" target="_blank" rel="noopener noreferrer">
+                <img class="claim-proof-image" src="${escapeHtml(claim.proofImageUrl)}" alt="Student ownership proof image">
+                <span><i class="fa-solid fa-arrow-up-right-from-square"></i> Open full-size proof image</span>
+              </a>` : `
+              <span class="helper-text"><i class="fa-solid fa-image"></i> No supporting image uploaded.</span>`}
           </div>
           <div class="comparison-col" style="background:rgba(245,158,11,0.08);padding:10px;border-radius:6px;">
             <h5 style="color:#b45309;"><i class="fa-solid fa-key"></i> Secret Faculty Custody Record:</h5>

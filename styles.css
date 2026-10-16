@@ -2391,6 +2391,25 @@ body.theme-dark .confidential-badge {
   color: var(--text-main);
 }
 
+.claim-proof-image-link {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--brand-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.claim-proof-image {
+  width: 180px;
+  max-height: 140px;
+  object-fit: cover;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+}
+
 .admin-claim-actions {
   display: flex;
   align-items: center;

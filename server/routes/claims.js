@@ -11,6 +11,7 @@
 const express         = require('express');
 const { Claims, Items } = require('../lib/db');
 const { requireAuth, requireFaculty } = require('../middleware/auth');
+const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -65,7 +66,7 @@ router.get('/', (req, res) => {
 });
 
 // ── POST /api/claims  (student submits ownership claim) ───────────────────
-router.post('/', (req, res) => {
+router.post('/', upload.single('proofImage'), (req, res) => {
   try {
     const { itemId, studentName, studentRoll, studentEmail, studentPhone, studentProof } = req.body;
 
@@ -110,6 +111,7 @@ router.post('/', (req, res) => {
       studentEmail: studentEmail.trim(),
       studentPhone: (studentPhone || '').trim(),
       studentProof: studentProof.trim(),
+      proofImageUrl: req.file ? `/uploads/${req.file.filename}` : null,
       status:       'Pending Review',
       statusNote:   null,
       timestamp:    new Date().toISOString()
